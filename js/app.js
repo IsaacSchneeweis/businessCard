@@ -1,5 +1,7 @@
 
 
+import * as THREE from '../node_modules/three/build/three.js';
+import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 //basic init
 const renderer = new THREE.WebGLRenderer();
 const scene = new THREE.Scene();
@@ -9,7 +11,7 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 
-
+const controls = new OrbitControls( camera, renderer.domElement );
 
 
 //map function
@@ -147,7 +149,7 @@ function animate() {
 	requestAnimationFrame( animate );
    box.rotation.x += 0.01;
 //box.rotation.y += 0.01;
-
+controls.update();
 
 	renderer.render( scene, camera );
 }
