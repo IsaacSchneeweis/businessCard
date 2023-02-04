@@ -8,7 +8,7 @@ import { GLTFLoader } from "../node_modules/three/examples/jsm/loaders/GLTFLoade
 //basic init
 const renderer = new THREE.WebGLRenderer();
 const scene = new THREE.Scene();
-renderer.setClearColor( 0xd1d1d1, 1);
+renderer.setClearColor( 0xd1d1d1);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const loader = new THREE.GLTFLoader();
 

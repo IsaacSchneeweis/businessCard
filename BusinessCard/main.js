@@ -1,21 +1,26 @@
 
 
-import { EquirectangularReflectionMapping } from "three";
+
 import * as THREE from "../node_modules/three/build/three.module.js";
 import { OrbitControls } from "../node_modules/three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "../node_modules/three/examples/jsm/loaders/GLTFLoader";
 //import {loadModels} from "/loaders"
 
 //basic init
-const renderer = new THREE.WebGLRenderer({antialias: true});
+const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
 
-const scene = new THREE.Scene();
+const scene = new THREE.Scene({background: 0x121212});
 renderer.setClearColor( 0x121212, 1);
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const loader = new GLTFLoader();
 
-const light = new THREE.DirectionalLight(0xfff0dd, 3);
+const light = new THREE.DirectionalLight(0xffffff, 20);
 light.position.set(0, 5, 10);
+
+const Alight = new THREE.AmbientLight( 0x404040 );
+
+
+
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -23,23 +28,14 @@ document.body.appendChild( renderer.domElement );
 //oribtcontrols and camera
 const controls = new OrbitControls( camera, renderer.domElement );
 
-camera.position.z = 10;
+camera.position.z = 40;
 
 
 
 
 
-//material
-const greenMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 } );
-const blueMaterial = new THREE.MeshBasicMaterial( { color: 0x3446eb, side: THREE.DoubleSide,transparent: true, opacity: 0.5 } );
-const lineMaterial = new THREE.LineBasicMaterial( {
-	color: 0x3446eb,
-	linewidth: 1,
-	linecap: 'round', //ignored by WebGLRenderer
-	linejoin:  'round', //ignored by WebGLRenderer
-    side: THREE.DoubleSide
-} );
-var tex;
+
+
 
 
 //main async function
@@ -47,34 +43,55 @@ async function main() {
 
 
 	//envmap
-	 const mapTexture = new THREE.TextureLoader().load("assets/envmap.png");
+	 const mapTexture = new THREE.TextureLoader().load("assets/2.jpg");
+	 const normalMapTexture = new THREE.TextureLoader().load("assets/5.jpg");
+
+	 normalMapTexture.wrapS = THREE.RepeatWrapping;
+		normalMapTexture.wrapT = THREE.RepeatWrapping;
+
 
 	 mapTexture.mapping = THREE.EquirectangularReflectionMapping;
 
 	 const plastic = new THREE.MeshPhysicalMaterial({ 
+	
 		roughness: 1, 
 		transparent:true,
 		opacity:0.7,
+		reflectivity: 1,
+		metalness:0,
+		ior: 1,
+		sheen: 1,
 		transmission: 1,  
-		thickness: 0.5,
+		thickness: 0.1,
 		envMap: mapTexture,
-		envMapIntensity: 5,
+		envMapIntensity: 1,
 		clearcoat: 1,
 		iridescence: 1,
-		iridescenceIOR:1
+		iridescenceIOR:1,
+		
+		clearcoatRoughness: 0,
+		normalMap: normalMapTexture,
+		normalScale: new THREE.Vector2(0.1,0.1),
+		clearcoatNormalMap: normalMapTexture,
+		clearcoatNormalScale: new THREE.Vector2(0.1,0.1)
+		
 
 	  });
 
-
+	  const geometry = new THREE.SphereGeometry( 8, 16, 7 );
+	  const material = new THREE.MeshStandardMaterial( { 
+		
+		color: 0xffffff, 
+	
+	
+	} );
+	  const cube = new THREE.Mesh( geometry, material );
+	 
 
 
 	
 	//load models
 	var cornerModel = await loader.loadAsync("../assets/corner.glb", function ( gltf ) {
-
-		
-		
-		
 
 		gltf.animations; // Array<THREE.AnimationClip>
 		gltf.scene; // THREE.Group
@@ -82,8 +99,6 @@ async function main() {
 		gltf.cameras; // Array<THREE.Camera>
 		gltf.asset; // Object
 		
-
-
 	});
 
 	var jointModel = await loader.loadAsync("../assets/joint.glb", function ( gltf ) {
@@ -94,23 +109,27 @@ async function main() {
 		gltf.scenes; // Array<THREE.Group>
 		gltf.cameras; // Array<THREE.Camera>
 		gltf.asset; // Object
+
+
 		
 	
 
 	});
 
-
+	//console.log(cornerModel);
 	//set object materials
 	cornerModel.scene.traverse( function( child ) {
-        if ( child instanceof THREE.Mesh ) {
+        if ( child.type == "Mesh" ) {
                 child.material = plastic;
-				
+				console.log("found it")
+				child.material.shading = THREE.SmoothShading;
          }
     } );
 
 	jointModel.scene.traverse( function( child ) {
-        if ( child instanceof THREE.Mesh ) {
+        if ( child.type == "Mesh" ) {
                 child.material = plastic;
+				//child.material.shading = THREE.SmoothShading;
 				
          }
     } );
@@ -133,14 +152,14 @@ function mapper (number, inMin, inMax, outMin, outMax) {
 
 
 //sizing of the box
-const sideSize = 3;
-const planeWidth = sideSize * 0.8;
+const sideSize = 20;
+const planeWidth = sideSize * 0.7;
 const planeHeight = planeWidth;
 
 
 //joint size
-const jointSize = sideSize * 0.2;
-const boxRadius = 1.0;
+const jointSize = sideSize * 0.3;
+
 
 
 
@@ -231,9 +250,11 @@ side6.translateX(sideSize/2);
 sidesAll.add(side, side2, side3, side4, side5, side6);
 
 sidesAll.translateZ(sideSize/2);
-box.add(sidesAll);
+box.add(sidesAll, cube);
 
-scene.add(box, light);
+scene.add(box, light, Alight);
+
+
 
 
 
