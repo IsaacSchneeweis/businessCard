@@ -6,7 +6,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: red;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,64 +24,109 @@ a:hover {
   color: #535bf2;
 }
 
+img {
+  width: 100vw;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+}
+
 body {
   margin: 0;
-  display: flex;
+
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: red;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.data-label {
+
+  position: relative;
+ 
+
+  display: inline;
+
+
+
+  
+  font-family: 'Junicode Two Beta VF';
+font-style: italic;
+font-weight: 100;
+font-size: 14px;
+line-height: 1em;
+/* identical to box height, or 100% */
+
+
+color: white;
+font-stretch: 125;
+font-variation-settings: 'ENLA' 0;
+
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.right {
+  right: 24;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
+.left {
+  left: 24;
+  
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.data-label-wrapper {
+  position: fixed;
+  display: flex;
+  column-gap: 40px;
+  z-index: 1;
+  padding: 48px 15px 8px;
 }
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #f7df1eaa);
-}
+
+
+
 
 .card {
   padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
+.maintext {
+  position: absolute;
+  font-size: 3em;
+  line-height: 1.2em;
+  max-width: 100wv;
+  pointer-events: none;
+  display: none;
+}
+
+canvas {
+  
+  width: 2px;
+  position: relative;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+ 
+ position: absolute;
+
+  font-size: 2em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.25s;
+ 
+  display: inline-block;
 }
-button:hover {
-  border-color: #646cff;
+
+#next {
+  bottom: 0;
+  right: 0;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+#prev {
+  bottom: 0;
+  left: 0;
 }
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -91,7 +136,5 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+
 }
